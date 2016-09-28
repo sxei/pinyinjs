@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="utf-8"/>
+	<title>汉字拼音互转示例</title>
+	<style type="text/css">
+	body{font-family: 'Microsoft Yahei'; font-size: 16px;}
+	</style>
+</head>
+
+<body>
+	<h2>汉字转拼音：</h2>
+	<div>
+		<span>输出类型：</span>
+		<label><input type="radio" name="pinyin_type" value="0" checked/>不带声调拼音</label>
+		<label><input type="radio" name="pinyin_type" value="1"/>带声调拼音</label>
+		<label><input type="radio" name="pinyin_type" value="2"/>拼音首字母</label>
+	</div>
+	<div>
+		<label><input type="checkbox" name="polyphone"/>是否支持多音字</label>
+	</div>
+	<input type="text" id="test">
+	<h3>结果：</h3>
+	<div id="result"></div>
+	<h2>简单的拼音输入法(只支持单个汉字输入)：</h2>
+	<input type="text" id="input_hanzi">
+	<div id="result_hanzi"></div>
+	<!--<script type="text/javascript" src="pinyin_dict_firstletter.js"></script>
+	<script type="text/javascript" src="pinyin_dict_notone.js"></script>-->
+	<script type="text/javascript" src="pinyin_dict_withtone.js"></script>
+	<script type="text/javascript" src="pinyinUtil.js"></script>
+
+	<script type="text/javascript">
+	function getPinyin()
+	{
+		var value = document.getElementById('test').value;
+		var type = document.querySelector('[name="pinyin_type"]:checked').value;
+		var polyphone = document.querySelector('[name="polyphone"]').checked;
+		var result = '';
+		if(value)
+		{
+			switch(type)
+			{
+				case '0': result = pinyinUtil.getPinyin(value, ' ', false, polyphone); break;
+				case '1': result = pinyinUtil.getPinyin(value, ' ', true, polyphone); break;
+				case '2': result = pinyinUtil.getFirstLetter(value, polyphone); break;
+				default: break;
+			}
+		}
+		result = (result instanceof Array) ? result.join('<br>') : result;
+		document.getElementById('result').innerHTML = result;
+	}
+	document.getElementById('test').addEventListener('input', getPinyin);
+	document.getElementsByName('polyphone')[0].addEventListener('change', function(e)
+	{
+		getPinyin();
+	});
+	document.addEventListener('change', function(e)
+	{
+		if(e.target.name === 'pinyin_type')
+		{
+			getPinyin();
+		}
+	});
+	document.getElementById('input_hanzi').addEventListener('input', function()
+	{
+		var res = pinyin.getHanzi(this.value);
+		document.getElementById('result_hanzi').innerHTML = res;
+	});
+
+	</script>
+
+</body>
+</html>
