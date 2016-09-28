@@ -26,7 +26,20 @@
 		}
 		if(window.pinyin_dict_withtone)
 		{
+			// 由于一次性将2万多个汉字拼音全部解析出来非常消耗性能，所以这里并不做处理，等到实际转换时按需解析。
 			dict.withtone = pinyin_dict_withtone.split(',');
+			return; // 由于将字典文件解析成拼音->汉字的结构非常耗时（大约需要1-2秒），所以暂时屏蔽
+			var py2hz = {};
+			for(var i=0; i<dict.withtone.length; i++)
+			{
+				var ch = eval('"\\u'+(i+19968).toString(16)+'"');
+				var temp = pinyin.removeTone(dict.withtone[i]).split(' ');
+				for(var j=0; j<temp.length; j++)
+				{
+					py2hz[temp[j]] = (py2hz[temp[j]] || '') + ch;
+				}
+			}
+			dict.py2hz = py2hz;
 		}
 	}
 
@@ -34,13 +47,14 @@
 	 * 根据汉字获取拼音，不支持多音字处理，如果不是汉字直接返回原字符
 	 * @param str 要处理的汉字
 	 * @param splitter 分割字符，默认空格
-	 * @param withtone 是否包含声调
-	 * @param polyphone 是否支持多音字
+	 * @param withtone 是否包含声调，默认是
+	 * @param polyphone 是否支持多音字，默认否
 	 */
 	pinyin.getPinyin = function(str, splitter, withtone, polyphone)
 	{
+		if(!str || /^ +$/g.test(str)) return;
 		splitter = splitter == undefined ? ' ' : splitter;
-		withtone = withtone == undefined ? false : withtone;
+		withtone = withtone == undefined ? true : withtone;
 		polyphone = polyphone == undefined ? false : polyphone;
 		var result = [];
 		if(dict.withtone) // 优先使用带声调的字典文件
@@ -48,13 +62,13 @@
 			for (var i=0, len = str.length; i < len; i++)
 			{
 				var unicode = str.charCodeAt(i);
-				var temp = dict.withtone[unicode-19968];
-				if(temp)
+				var py = dict.withtone[unicode-19968];
+				if(py)
 				{
-					if(!withtone) temp = temp.replace(/\d/g, ''); // 如果不需要声调
-					if(!polyphone) temp = temp.replace(/ .*$/g, ''); // 如果不需要多音字
+					if(!polyphone) py = py.replace(/ .*$/g, ''); // 如果不需要多音字
+					if(!withtone) py = this.removeTone(py); // 如果不需要声调
 				}
-				result.push(temp || str.charAt(i)); 
+				result.push(py || str.charAt(i)); 
 			}
 		}
 		else if(dict.notone) // 使用没有声调的字典文件
@@ -80,6 +94,11 @@
 	 */
 	pinyin.getHanzi = function(str)
 	{
+		var result = [];
+		for(var i=0; i<str.length; i++)
+		{
+			//if(!/\w/g.test(str[i]))
+		}
 		var result = dict.py2hz[str];
 		if(result) return result;
 		for(var i in dict.py2hz)
@@ -98,7 +117,7 @@
 	pinyin.getFirstLetter = function(str, polyphone)
 	{
 		polyphone = polyphone == undefined ? false : polyphone;
-		if(!str) return;
+		if(!str || /^ +$/g.test(str)) return;
 		if(dict.firstletter) // 使用首字母字典文件
 		{
 			var result = [];
@@ -125,8 +144,8 @@
 			{
 				result.push(py[i].replace(/(^| )(\w)\w*/g, function(m,$1,$2){return $2.toUpperCase();}));
 			}
-			if(!polyphone) result[0];
-			else return result;
+			if(!polyphone) return result[0];
+			else return simpleUnique(result);
 		}
 	};
 
@@ -150,8 +169,62 @@
 			}
 			result = temp;
 		}
+		return simpleUnique(result);
+	}
+
+	// 简单数组去重
+	function simpleUnique(array)
+	{
+		var result = [];
+		var hash = {};
+		for(var i=0; i<array.length; i++)
+		{
+			var key = (typeof array[i]) + array[i];
+			if(!hash[key])
+			{
+				result.push(array[i]);
+				hash[key] = true;
+			}
+		}
 		return result;
 	}
+
+	// 去除声调
+	pinyin.removeTone = function(py)
+	{
+		var toneObj = 
+		{
+			"ā": "a1",
+			"á": "a2",
+			"ǎ": "a3",
+			"à": "a4",
+			"ō": "o1",
+			"ó": "o2",
+			"ǒ": "o3",
+			"ò": "o4",
+			"ē": "e1",
+			"é": "e2",
+			"ě": "e3",
+			"è": "e4",
+			"ī": "i1",
+			"í": "i2",
+			"ǐ": "i3",
+			"ì": "i4",
+			"ū": "u1",
+			"ú": "u2",
+			"ǔ": "u3",
+			"ù": "u4",
+			"ü": "v0",
+			"ǖ": "v1",
+			"ǘ": "v2",
+			"ǚ": "v3",
+			"ǜ": "v4",
+			"ń": "n2",
+			"ň": "n3",
+			"": "m2"
+		};
+		return py.replace(/[āáǎàōóǒòēéěèīíǐìūúǔùüǖǘǚǜńň]/g, function(m){ return toneObj[m][0]; });
+	};
 
 	pinyin.parseDict();
 	window.pinyinUtil = pinyin;
