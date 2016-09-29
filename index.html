@@ -5,6 +5,41 @@
 	<title>汉字拼音互转示例</title>
 	<style type="text/css">
 	body{font-family: 'Microsoft Yahei'; font-size: 16px;}
+
+.simple-input-method {
+    position: absolute;
+    background: #FFF;
+    border: solid 1px #B5C5D2;
+    font-family: 'Arial';
+    color: #0364CD;
+    display: none;
+}
+.simple-input-method .pinyin {
+    border-bottom: solid 1px #B5C5D2;
+    padding: 4px 10px;
+    font-weight: bold;
+}
+.simple-input-method .result {
+    padding: 4px 10px 4px 0px;
+}
+.simple-input-method .result ol {
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+    vertical-align: middle;
+}
+.simple-input-method .result ol:after {
+    content: '';
+    display: block;
+    clear: left;
+}
+.simple-input-method .result ol li {
+    float: left;
+    margin-left: 30px;
+}
+.simple-input-method .result ol li:first-child {
+    color: red;
+}
 	</style>
 </head>
 
@@ -24,8 +59,16 @@
 	<h3>结果：</h3>
 	<div id="result"></div>
 	<h2>简单的拼音输入法(只支持单个汉字输入)：</h2>
-	<input type="text" id="input_hanzi">
-	<div id="result_hanzi"></div>
+	<input type="text" id="test_input">
+	<div id="simle_input_method" class="simple-input-method">
+		<div class="pinyin">kan'fa</div>
+		<div class="result">
+			<ol>
+				<li>看</li><li>方法</li><li>个</li><li>是</li><li>和</li>
+			</ol>
+			<span class="page-up">&lt;</span><span class="page-down">&gt;</span>
+		</div>
+	</div>
 	<!--<script type="text/javascript" src="pinyin_dict_firstletter.js"></script>
 	<script type="text/javascript" src="old/pinyin_dict_all_new.js"></script>-->
 	<script type="text/javascript" src="pinyin_dict_notone.js"></script>
@@ -64,12 +107,104 @@
 			getPinyin();
 		}
 	});
-	document.getElementById('input_hanzi').addEventListener('input', function()
+	document.getElementById('test_input').addEventListener('input', function()
 	{
-		var res = pinyinUtil.getHanzi(this.value);
-		document.getElementById('result_hanzi').innerHTML = res;
+		//var res = pinyinUtil.getHanzi(this.value);
+		//document.getElementById('result_hanzi').innerHTML = res;
 	});
 	getPinyin();
+
+
+	var SimpleInputMethod = 
+	{
+		pinyin: '',
+		result: [],
+		pageCurrent: 1,
+		pageSize: 5,
+		pageCount: 0,
+		init: function(obj)
+		{
+			this._target = document.querySelector('#simle_input_method');
+			this._pinyinTarget = document.querySelector('#simle_input_method .pinyin');
+			this._resultTarget = document.querySelector('#simle_input_method .result ol');
+			var that = this;
+			obj.addEventListener('keydown', function(e)
+			{
+				console.log(e.keyCode);
+				var keyCode = e.keyCode;
+				if(keyCode >= 65 && keyCode <= 90) that.addChar(String.fromCharCode(keyCode+32));
+				else if(keyCode == 8) that.delChar();
+				else if(keyCode >= 48 && keyCode <= 57) that.selectHanzi(keyCode-48);
+				e.preventDefault();
+			});
+		},
+		/**
+		 * 拼音转汉字
+		 */
+		getHanzi: function(pinyin)
+		{
+			var result = pinyinUtil.getHanzi(pinyin);
+			if(result) return [result, pinyin.length];
+			var temp = '';
+			for(var i=0, len = pinyin.length; i<len; i++)
+			{
+				temp += pinyin[i];
+				result = pinyinUtil.getHanzi(temp);
+				if(result && ((i+1)>=len) || !pinyinUtil.getHanzi(temp+pinyin[i+1]))
+				{
+					return [result, i+1];
+				}
+			}
+			return ['', 0];
+		},
+		selectHanzi: function(i)
+		{
+			console.log(i);
+		},
+		refresh: function()
+		{
+			this.result = this.getHanzi(this.pinyin);
+			var count = this.result[0].length;
+			this.pageCurrent = 1;
+			this.pageCount = Math.ceil(count / this.pageSize);
+			var temp = this.result[0].substr((this.pageCurrent-1)*this.pageSize, this.pageSize).split('');
+			var html = '';
+			temp.forEach(function(i)
+			{
+				html += '<li>' + i + '</li>';
+			});
+			this._resultTarget.innerHTML = html;
+		},
+		addChar: function(ch)
+		{
+			this.pinyin += ch;
+			this._pinyinTarget.innerHTML = this.pinyin;
+			this.refresh();
+			if(this.pinyin.length == 1) // 长度为1，显示输入法
+			{
+				this._target.style.display = 'block';
+			}
+		},
+		delChar: function()
+		{
+			if(this.pinyin.length <= 1)
+			{
+				this.clear();
+				return;
+			}
+			this.pinyin = this.pinyin.substr(0, this.pinyin.length-1);
+			this._pinyinTarget.innerHTML = this.pinyin;
+			this.refresh();
+		},
+		clear: function()
+		{
+			this.pinyin = '';
+			this._pinyinTarget.innerHTML = '';
+			this._target.style.display = 'none';
+		}
+	};
+	SimpleInputMethod.init(document.getElementById('test_input'));
+
 	</script>
 
 </body>
