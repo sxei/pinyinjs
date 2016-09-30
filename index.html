@@ -107,16 +107,13 @@
 			getPinyin();
 		}
 	});
-	document.getElementById('test_input').addEventListener('input', function()
-	{
-		//var res = pinyinUtil.getHanzi(this.value);
-		//document.getElementById('result_hanzi').innerHTML = res;
-	});
 	getPinyin();
 
 
+	// 简单的JS版输入法
 	var SimpleInputMethod = 
 	{
+		hanzi: '',
 		pinyin: '',
 		result: [],
 		pageCurrent: 1,
@@ -124,6 +121,7 @@
 		pageCount: 0,
 		init: function(obj)
 		{
+			this.obj = obj;
 			this._target = document.querySelector('#simle_input_method');
 			this._pinyinTarget = document.querySelector('#simle_input_method .pinyin');
 			this._resultTarget = document.querySelector('#simle_input_method .result ol');
@@ -135,6 +133,7 @@
 				if(keyCode >= 65 && keyCode <= 90) that.addChar(String.fromCharCode(keyCode+32));
 				else if(keyCode == 8) that.delChar();
 				else if(keyCode >= 48 && keyCode <= 57) that.selectHanzi(keyCode-48);
+				else if(keyCode == 32) that.selectHanzi(1);
 				e.preventDefault();
 			});
 		},
@@ -143,8 +142,10 @@
 		 */
 		getHanzi: function(pinyin)
 		{
+
+			pinyin = pinyin.replace(/'/g, '');
 			var result = pinyinUtil.getHanzi(pinyin);
-			if(result) return [result, pinyin.length];
+			if(result) return [result.split(''), pinyin];
 			var temp = '';
 			for(var i=0, len = pinyin.length; i<len; i++)
 			{
@@ -152,38 +153,52 @@
 				result = pinyinUtil.getHanzi(temp);
 				if(result && ((i+1)>=len) || !pinyinUtil.getHanzi(temp+pinyin[i+1]))
 				{
-					return [result, i+1];
+					return [result.split(''), pinyin.substr(0, i+1) + "'" + pinyin.substr(i+1)];
 				}
 			}
-			return ['', 0];
+			return [[], '']; // 理论上一般不会出现这种情况
 		},
 		selectHanzi: function(i)
 		{
-			console.log(i);
+			this.hanzi += this.result[(this.pageCurrent-1)*this.pageSize+i-1];
+			var idx = this.pinyin.indexOf("'");
+			if(idx > 0)
+			{
+				this.pinyin = this.pinyin.substr(idx+1);
+				this.refresh();
+			}
+			else
+			{
+				this.obj.value += this.hanzi;
+				this.clear();
+			}
 		},
 		refresh: function()
 		{
-			this.result = this.getHanzi(this.pinyin);
-			var count = this.result[0].length;
+			var temp = this.getHanzi(this.pinyin);
+			console.log(temp)
+			this.result = temp[0];
+			this.pinyin = temp[1];
+			var count = this.result.length;
 			this.pageCurrent = 1;
 			this.pageCount = Math.ceil(count / this.pageSize);
-			var temp = this.result[0].substr((this.pageCurrent-1)*this.pageSize, this.pageSize).split('');
+			var temp2 = this.result.slice((this.pageCurrent-1)*this.pageSize, this.pageCurrent*this.pageSize);
 			var html = '';
-			temp.forEach(function(i)
+			temp2.forEach(function(i)
 			{
 				html += '<li>' + i + '</li>';
 			});
 			this._resultTarget.innerHTML = html;
+			this._pinyinTarget.innerHTML = this.hanzi + this.pinyin;
 		},
 		addChar: function(ch)
 		{
 			this.pinyin += ch;
-			this._pinyinTarget.innerHTML = this.pinyin;
-			this.refresh();
 			if(this.pinyin.length == 1) // 长度为1，显示输入法
 			{
 				this._target.style.display = 'block';
 			}
+			this.refresh();
 		},
 		delChar: function()
 		{
@@ -193,11 +208,11 @@
 				return;
 			}
 			this.pinyin = this.pinyin.substr(0, this.pinyin.length-1);
-			this._pinyinTarget.innerHTML = this.pinyin;
 			this.refresh();
 		},
 		clear: function()
 		{
+			this.hanzi = '';
 			this.pinyin = '';
 			this._pinyinTarget.innerHTML = '';
 			this._target.style.display = 'none';
