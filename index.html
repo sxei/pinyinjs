@@ -6,6 +6,8 @@
 	<style type="text/css">
 	body{font-family: 'Microsoft Yahei'; font-size: 16px;}
 
+
+/* simple-input-method.css */
 .simple-input-method {
     position: absolute;
     background: #FFF;
@@ -58,8 +60,11 @@
 	<input type="text" id="test" value="大中国">
 	<h3>结果：</h3>
 	<div id="result"></div>
-	<h2>简单的拼音输入法(只支持单个汉字输入)：</h2>
-	<input type="text" id="test_input">
+	<h2>简单的拼音输入法(请将系统输入法设置为英文)：</h2>
+	<input type="text" class="test-input-method">
+	<input type="text" class="test-input-method">
+	<input type="text" class="">
+	<input type="text" class="test-input-method">
 	<div id="simle_input_method" class="simple-input-method">
 		<div class="pinyin">kan'fa</div>
 		<div class="result">
@@ -110,7 +115,10 @@
 	getPinyin();
 
 
-	// 简单的JS版输入法
+	/**
+	 * 简单的JS版输入法
+	 * simple-input-method.js
+	 */
 	var SimpleInputMethod = 
 	{
 		hanzi: '',
@@ -119,39 +127,107 @@
 		pageCurrent: 1,
 		pageSize: 5,
 		pageCount: 0,
-		init: function(obj)
+		initDict: function()
 		{
-			this.obj = obj;
+			var dict = pinyinUtil.dict;
+			if(!dict.py2hz) throw '未找到合适的字典文件！';
+			// 这一步仅仅是给字母a-z扩充，例如根据b找不到相关汉字，就把bi的结果赋值给b
+			// 当然这种方式只是很简单的实现，真正的拼音输入法肯定不能这么简单处理
+			dict.py2hz2 = {};
+			dict.py2hz2['i'] = 'i'; // i比较特殊，特殊处理
+			for(var i=97; i<=123; i++)
+			{
+				var ch = String.fromCharCode(i);
+				if(!dict.py2hz[ch])
+				{
+					for(var j in dict.py2hz)
+					{
+						if(j.indexOf(ch) == 0)
+						{
+							dict.py2hz2[ch] = dict.py2hz[j];
+							break;
+						}
+					}
+				}
+			}
+		},
+		init: function(selector)
+		{
+			this.initDict();
+			obj = document.querySelectorAll(selector);
 			this._target = document.querySelector('#simle_input_method');
 			this._pinyinTarget = document.querySelector('#simle_input_method .pinyin');
 			this._resultTarget = document.querySelector('#simle_input_method .result ol');
 			var that = this;
-			obj.addEventListener('keydown', function(e)
+			for(var i=0; i<obj.length; i++)
 			{
-				console.log(e.keyCode);
-				var keyCode = e.keyCode;
-				if(keyCode >= 65 && keyCode <= 90) that.addChar(String.fromCharCode(keyCode+32));
-				else if(keyCode == 8) that.delChar();
-				else if(keyCode >= 48 && keyCode <= 57) that.selectHanzi(keyCode-48);
-				else if(keyCode == 32) that.selectHanzi(1);
-				e.preventDefault();
-			});
+				obj[i].addEventListener('keydown', function(e)
+				{
+					console.log(e.keyCode);
+					var keyCode = e.keyCode;
+					var preventDefault = false;
+					if(keyCode >= 65 && keyCode <= 90) // A-Z
+					{
+						that.addChar(String.fromCharCode(keyCode+32), this);
+						preventDefault = true;
+					}
+					else if(keyCode == 8 && that.pinyin) // 删除键
+					{
+						that.delChar();
+						preventDefault = true;
+					}
+					else if(keyCode >= 48 && keyCode <= 57) // 1-9
+					{
+						that.selectHanzi(keyCode-48);
+						preventDefault = true;
+					}
+					else if(keyCode == 32) // 空格
+					{
+						that.selectHanzi(1);
+						preventDefault = true;
+					}
+					else if(keyCode == 33 && that.pageCount > 0 && that.pageCurrent > 1) // 上翻页
+					{
+						that.pageCurrent--;
+						that.refreshPage();
+						preventDefault = true;
+					}
+					else if(keyCode == 34 && that.pageCount > 0 && that.pageCurrent < that.pageCount) // 下翻页
+					{
+						that.pageCurrent++;
+						that.refreshPage();
+						preventDefault = true;
+					}
+					if(preventDefault) e.preventDefault();
+				});
+				obj[i].addEventListener('focus', function()
+				{
+					that.hide();
+				});
+			}
+		},
+		/**
+		 * 单个拼音转单个汉字
+		 */
+		getSingleHanzi: function(pinyin)
+		{
+			return pinyinUtil.dict.py2hz2[pinyin] || pinyinUtil.dict.py2hz[pinyin] || '';
 		},
 		/**
 		 * 拼音转汉字
 		 */
 		getHanzi: function(pinyin)
 		{
-
+			console.log(pinyin);
 			pinyin = pinyin.replace(/'/g, '');
-			var result = pinyinUtil.getHanzi(pinyin);
+			var result = this.getSingleHanzi(pinyin);
 			if(result) return [result.split(''), pinyin];
 			var temp = '';
 			for(var i=0, len = pinyin.length; i<len; i++)
 			{
 				temp += pinyin[i];
-				result = pinyinUtil.getHanzi(temp);
-				if(result && ((i+1)>=len) || !pinyinUtil.getHanzi(temp+pinyin[i+1]))
+				result = this.getSingleHanzi(temp);
+				if(result && ((i+1)>=len) || !this.getSingleHanzi(temp+pinyin[i+1]))
 				{
 					return [result.split(''), pinyin.substr(0, i+1) + "'" + pinyin.substr(i+1)];
 				}
@@ -162,6 +238,7 @@
 		{
 			this.hanzi += this.result[(this.pageCurrent-1)*this.pageSize+i-1];
 			var idx = this.pinyin.indexOf("'");
+			console.log(22, this.pinyin);
 			if(idx > 0)
 			{
 				this.pinyin = this.pinyin.substr(idx+1);
@@ -169,10 +246,13 @@
 			}
 			else
 			{
-				this.obj.value += this.hanzi;
-				this.clear();
+				this._input.value += this.hanzi;
+				this.hide();
 			}
 		},
+		/**
+		 * 将拼音转换成汉字候选词，并显示在界面上
+		 */
 		refresh: function()
 		{
 			var temp = this.getHanzi(this.pinyin);
@@ -182,43 +262,61 @@
 			var count = this.result.length;
 			this.pageCurrent = 1;
 			this.pageCount = Math.ceil(count / this.pageSize);
-			var temp2 = this.result.slice((this.pageCurrent-1)*this.pageSize, this.pageCurrent*this.pageSize);
+			this._pinyinTarget.innerHTML = this.hanzi + this.pinyin;
+			this.refreshPage();
+		},
+		refreshPage: function()
+		{
+			var temp = this.result.slice((this.pageCurrent-1)*this.pageSize, this.pageCurrent*this.pageSize);
 			var html = '';
-			temp2.forEach(function(i)
+			temp.forEach(function(i)
 			{
 				html += '<li>' + i + '</li>';
 			});
 			this._resultTarget.innerHTML = html;
-			this._pinyinTarget.innerHTML = this.hanzi + this.pinyin;
 		},
-		addChar: function(ch)
+		addChar: function(ch, obj)
 		{
-			this.pinyin += ch;
-			if(this.pinyin.length == 1) // 长度为1，显示输入法
+			if(this.pinyin.length == 0) // 长度为1，显示输入法
 			{
-				this._target.style.display = 'block';
+				this.show(obj);
 			}
+			this.pinyin += ch;
 			this.refresh();
 		},
 		delChar: function()
 		{
 			if(this.pinyin.length <= 1)
 			{
-				this.clear();
+				this.hide();
 				return;
 			}
 			this.pinyin = this.pinyin.substr(0, this.pinyin.length-1);
 			this.refresh();
 		},
-		clear: function()
+		show: function(obj)
+		{
+			var pos = obj.getBoundingClientRect();
+			this._target.style.left = pos.left + 'px';
+			this._target.style.top = pos.top + pos.height + 'px';
+			this._input = obj;
+			this._target.style.display = 'block';
+		},
+		hide: function()
+		{
+			this.reset();
+			this._target.style.display = 'none';
+		},
+		reset: function()
 		{
 			this.hanzi = '';
 			this.pinyin = '';
+			this.pageCurrent = 1;
+			this.pageCount = 0;
 			this._pinyinTarget.innerHTML = '';
-			this._target.style.display = 'none';
 		}
 	};
-	SimpleInputMethod.init(document.getElementById('test_input'));
+	SimpleInputMethod.init('.test-input-method');
 
 	</script>
 

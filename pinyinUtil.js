@@ -51,26 +51,6 @@
 				}
 				dict.py2hz = py2hz;
 			}
-			if(dict.py2hz)
-			{
-				// 这一步仅仅是给字母a-z扩充，例如根据b找不到相关汉字，就把bi的结果赋值给b
-				dict.py2hz2 = {};
-				for(var i=97; i<=123; i++)
-				{
-					var ch = String.fromCharCode(i);
-					if(!dict.py2hz[ch])
-					{
-						for(var j in dict.py2hz)
-						{
-							if(j.indexOf(ch) == 0)
-							{
-								dict.py2hz2[ch] = dict.py2hz[j];
-								break;
-							}
-						}
-					}
-				}
-			}
 		},
 		/**
 		 * 根据汉字获取拼音，不支持多音字处理，如果不是汉字直接返回原字符
@@ -204,7 +184,7 @@
 			{
 				throw '抱歉，未找到合适的拼音字典文件！';
 			}
-			return dict.py2hz2[pinyin] || dict.py2hz[pinyin] || '';
+			return dict.py2hz[pinyin] || '';
 		}
 	};
 
@@ -249,5 +229,6 @@
 	}
 
 	pinyinUtil.parseDict();
+	pinyinUtil.dict = dict;
 	window.pinyinUtil = pinyinUtil;
 })();
