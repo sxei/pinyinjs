@@ -14,12 +14,12 @@
 		 */
 		parseDict: function()
 		{
-			// 如果导入的是 pinyin_dict_firstletter.js
+			// 如果导入了 pinyin_dict_firstletter.js
 			if(window.pinyin_dict_firstletter)
 			{
 				dict.firstletter = pinyin_dict_firstletter;
 			}
-			// 如果导入的是 pinyin_dict_notone.js
+			// 如果导入了 pinyin_dict_notone.js
 			if(window.pinyin_dict_notone)
 			{
 				dict.notone = {};
@@ -33,23 +33,33 @@
 					}
 				}
 			}
+			// 如果导入了 pinyin_dict_withtone.js
 			if(window.pinyin_dict_withtone)
 			{
 				dict.withtone = pinyin_dict_withtone.split(',');
-				// 将字典文件解析成拼音->汉字的结构
-				// 与先分割后逐个去掉声调相比，先一次性全部去掉声调然后再分割速度至少快了3倍，前者大约需要120毫秒，后者大约只需要30毫秒（Chrome下）
-				var notone = pinyinUtil.removeTone(pinyin_dict_withtone).split(',');
-				var py2hz = {}, py, hz;
-				for(var i=0, len = notone.length; i<len; i++)
+				if(window.pinyin_dict_notone)
 				{
-					hz = String.fromCharCode(i + 19968); // 汉字
-					py = notone[i].split(' '); // 去掉了声调的拼音数组
-					for(var j=0; j<py.length; j++)
-					{
-						py2hz[py[j]] = (py2hz[py[j]] || '') + hz;
-					}
+					// 对于拼音转汉字，我们优先使用pinyin_dict_notone字典文件
+					// 因为这个字典文件不包含生僻字，且已按照汉字使用频率排序
+					dict.py2hz = pinyin_dict_notone; // 拼音转汉字
 				}
-				dict.py2hz = py2hz;
+				else
+				{
+					// 将字典文件解析成拼音->汉字的结构
+					// 与先分割后逐个去掉声调相比，先一次性全部去掉声调然后再分割速度至少快了3倍，前者大约需要120毫秒，后者大约只需要30毫秒（Chrome下）
+					var notone = pinyinUtil.removeTone(pinyin_dict_withtone).split(',');
+					var py2hz = {}, py, hz;
+					for(var i=0, len = notone.length; i<len; i++)
+					{
+						hz = String.fromCharCode(i + 19968); // 汉字
+						py = notone[i].split(' '); // 去掉了声调的拼音数组
+						for(var j=0; j<py.length; j++)
+						{
+							py2hz[py[j]] = (py2hz[py[j]] || '') + hz;
+						}
+					}
+					dict.py2hz = py2hz;
+				}
 			}
 		},
 		/**

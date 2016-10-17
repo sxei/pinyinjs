@@ -1,6 +1,6 @@
 /**
  * 拼音库，来源于[在线汉语字典](http://zi.artx.cn/zi/)
- * 在原来基础上增加了酿、铽等21个汉字，add by @liuxianan
+ * 在 pinyin_dict_all_old.js 基础上增加了酿、铽等21个汉字，add by @liuxianan
  */
 var pinyin_dict_all = {
 "吖": "yā,ā",

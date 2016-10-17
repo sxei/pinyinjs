@@ -3,49 +3,44 @@
 <head>
 	<meta charset="utf-8"/>
 	<title>汉字拼音互转示例</title>
+	<link rel="stylesheet" type="text/css" href="simple-input-method/simple-input-method.css">
 	<style type="text/css">
 	body{font-family: 'Microsoft Yahei'; font-size: 16px;}
-
-
-/* simple-input-method.css */
-.simple-input-method {
-    position: absolute;
-    background: #FFF;
-    border: solid 1px #B5C5D2;
-    font-family: 'Arial';
-    color: #0364CD;
-    display: none;
-}
-.simple-input-method .pinyin {
-    border-bottom: solid 1px #B5C5D2;
-    padding: 4px 10px;
-    font-weight: bold;
-}
-.simple-input-method .result {
-    padding: 4px 10px 4px 0px;
-}
-.simple-input-method .result ol {
-    margin: 0;
-    padding: 0;
-    display: inline-block;
-    vertical-align: middle;
-}
-.simple-input-method .result ol:after {
-    content: '';
-    display: block;
-    clear: left;
-}
-.simple-input-method .result ol li {
-    float: left;
-    margin-left: 30px;
-}
-.simple-input-method .result ol li:first-child {
-    color: red;
-}
+	* {
+		-webkit-box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		box-sizing: border-box;
+	}
+	input[type="text"] {
+		height: 34px;
+		padding: 6px 12px;
+		font-size: 14px;
+		line-height: 1.42857143;
+		color: #555;
+		background-color: #fff;
+		background-image: none;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+		-webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+		transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+	}
+	input[type="text"]:focus {
+		border-color: #66afe9;
+		outline: 0;
+		-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
+		box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
+	}
+	h2 > span {
+		color: #B10000;
+		font-size: 0.8em;
+	}
+	#test {margin-top: 10px;}
 	</style>
 </head>
 
 <body>
+	<a href="http://blog.liuxianan.com/javascript-pinyin.html">返回原文</a>
 	<h2>汉字转拼音：</h2>
 	<div>
 		<span>输出类型：</span>
@@ -54,31 +49,22 @@
 		<label><input type="radio" name="pinyin_type" value="2"/>拼音首字母</label>
 	</div>
 	<div>
+		<span>多音字：</span>
 		<label><input type="checkbox" name="polyphone"/>是否支持多音字</label>
-		<span>支持多音字仅仅是将所有可能的组合列举出来，要做到准确识别多音字还需非常完善的词库。</span>
+		<span style="color: #9E9E9E;">支持多音字仅仅是将所有可能的组合列举出来，要做到准确识别多音字还需非常完善的词库。</span>
 	</div>
-	<input type="text" id="test" value="大中国">
-	<h3>结果：</h3>
+	<input type="text" id="test" value="大中国" placeholder="请随便输入一些中文"/>
+	<h3>转换结果：</h3>
 	<div id="result"></div>
-	<h2>简单的拼音输入法(请将系统输入法设置为英文)：</h2>
-	<input type="text" class="test-input-method">
-	<input type="text" class="test-input-method">
-	<input type="text" class="">
-	<input type="text" class="test-input-method">
-	<div id="simle_input_method" class="simple-input-method">
-		<div class="pinyin">kan'fa</div>
-		<div class="result">
-			<ol>
-				<li>看</li><li>方法</li><li>个</li><li>是</li><li>和</li>
-			</ol>
-			<span class="page-up">&lt;</span><span class="page-down">&gt;</span>
-		</div>
-	</div>
-	<!--<script type="text/javascript" src="pinyin_dict_firstletter.js"></script>
-	<script type="text/javascript" src="old/pinyin_dict_all_new.js"></script>-->
+	<h2>JS实现简单的拼音输入法<span>(请将系统输入法设置为英文)：</span></h2>
+	<input type="text" class="test-input-method" placeholder="请在这里打字试试">
+	<input type="text" class="test-input-method" placeholder="请在这里打字试试">
+	<input type="text" class="test-input-method" placeholder="请在这里打字试试">
+
 	<script type="text/javascript" src="pinyin_dict_notone.js"></script>
 	<script type="text/javascript" src="pinyin_dict_withtone.js"></script>
 	<script type="text/javascript" src="pinyinUtil.js"></script>
+	<script type="text/javascript" src="simple-input-method/simple-input-method.js"></script>
 
 	<script type="text/javascript">
 	function getPinyin()
@@ -97,8 +83,17 @@
 				default: break;
 			}
 		}
-		result = (result instanceof Array) ? result.join('<br>') : result;
-		document.getElementById('result').innerHTML = result;
+		var html = result;
+		if(result instanceof Array)
+		{
+			html = '<ol>';
+			result.forEach(function(val)
+			{
+				html += '<li>'+val+'</li>';
+			});
+			html += '</ol>';
+		}
+		document.getElementById('result').innerHTML = html;
 	}
 	document.getElementById('test').addEventListener('input', getPinyin);
 	document.getElementsByName('polyphone')[0].addEventListener('change', function(e)
@@ -114,210 +109,8 @@
 	});
 	getPinyin();
 
-
-	/**
-	 * 简单的JS版输入法
-	 * simple-input-method.js
-	 */
-	var SimpleInputMethod = 
-	{
-		hanzi: '',
-		pinyin: '',
-		result: [],
-		pageCurrent: 1,
-		pageSize: 5,
-		pageCount: 0,
-		initDict: function()
-		{
-			var dict = pinyinUtil.dict;
-			if(!dict.py2hz) throw '未找到合适的字典文件！';
-			// 这一步仅仅是给字母a-z扩充，例如根据b找不到相关汉字，就把bi的结果赋值给b
-			// 当然这种方式只是很简单的实现，真正的拼音输入法肯定不能这么简单处理
-			dict.py2hz2 = {};
-			dict.py2hz2['i'] = 'i'; // i比较特殊，特殊处理
-			for(var i=97; i<=123; i++)
-			{
-				var ch = String.fromCharCode(i);
-				if(!dict.py2hz[ch])
-				{
-					for(var j in dict.py2hz)
-					{
-						if(j.indexOf(ch) == 0)
-						{
-							dict.py2hz2[ch] = dict.py2hz[j];
-							break;
-						}
-					}
-				}
-			}
-		},
-		init: function(selector)
-		{
-			this.initDict();
-			obj = document.querySelectorAll(selector);
-			this._target = document.querySelector('#simle_input_method');
-			this._pinyinTarget = document.querySelector('#simle_input_method .pinyin');
-			this._resultTarget = document.querySelector('#simle_input_method .result ol');
-			var that = this;
-			for(var i=0; i<obj.length; i++)
-			{
-				obj[i].addEventListener('keydown', function(e)
-				{
-					console.log(e.keyCode);
-					var keyCode = e.keyCode;
-					var preventDefault = false;
-					if(keyCode >= 65 && keyCode <= 90) // A-Z
-					{
-						that.addChar(String.fromCharCode(keyCode+32), this);
-						preventDefault = true;
-					}
-					else if(keyCode == 8 && that.pinyin) // 删除键
-					{
-						that.delChar();
-						preventDefault = true;
-					}
-					else if(keyCode >= 48 && keyCode <= 57) // 1-9
-					{
-						that.selectHanzi(keyCode-48);
-						preventDefault = true;
-					}
-					else if(keyCode == 32) // 空格
-					{
-						that.selectHanzi(1);
-						preventDefault = true;
-					}
-					else if(keyCode == 33 && that.pageCount > 0 && that.pageCurrent > 1) // 上翻页
-					{
-						that.pageCurrent--;
-						that.refreshPage();
-						preventDefault = true;
-					}
-					else if(keyCode == 34 && that.pageCount > 0 && that.pageCurrent < that.pageCount) // 下翻页
-					{
-						that.pageCurrent++;
-						that.refreshPage();
-						preventDefault = true;
-					}
-					if(preventDefault) e.preventDefault();
-				});
-				obj[i].addEventListener('focus', function()
-				{
-					that.hide();
-				});
-			}
-		},
-		/**
-		 * 单个拼音转单个汉字
-		 */
-		getSingleHanzi: function(pinyin)
-		{
-			return pinyinUtil.dict.py2hz2[pinyin] || pinyinUtil.dict.py2hz[pinyin] || '';
-		},
-		/**
-		 * 拼音转汉字
-		 */
-		getHanzi: function(pinyin)
-		{
-			console.log(pinyin);
-			pinyin = pinyin.replace(/'/g, '');
-			var result = this.getSingleHanzi(pinyin);
-			if(result) return [result.split(''), pinyin];
-			var temp = '';
-			for(var i=0, len = pinyin.length; i<len; i++)
-			{
-				temp += pinyin[i];
-				result = this.getSingleHanzi(temp);
-				if(result && ((i+1)>=len) || !this.getSingleHanzi(temp+pinyin[i+1]))
-				{
-					return [result.split(''), pinyin.substr(0, i+1) + "'" + pinyin.substr(i+1)];
-				}
-			}
-			return [[], '']; // 理论上一般不会出现这种情况
-		},
-		selectHanzi: function(i)
-		{
-			this.hanzi += this.result[(this.pageCurrent-1)*this.pageSize+i-1];
-			var idx = this.pinyin.indexOf("'");
-			console.log(22, this.pinyin);
-			if(idx > 0)
-			{
-				this.pinyin = this.pinyin.substr(idx+1);
-				this.refresh();
-			}
-			else
-			{
-				this._input.value += this.hanzi;
-				this.hide();
-			}
-		},
-		/**
-		 * 将拼音转换成汉字候选词，并显示在界面上
-		 */
-		refresh: function()
-		{
-			var temp = this.getHanzi(this.pinyin);
-			console.log(temp)
-			this.result = temp[0];
-			this.pinyin = temp[1];
-			var count = this.result.length;
-			this.pageCurrent = 1;
-			this.pageCount = Math.ceil(count / this.pageSize);
-			this._pinyinTarget.innerHTML = this.hanzi + this.pinyin;
-			this.refreshPage();
-		},
-		refreshPage: function()
-		{
-			var temp = this.result.slice((this.pageCurrent-1)*this.pageSize, this.pageCurrent*this.pageSize);
-			var html = '';
-			temp.forEach(function(i)
-			{
-				html += '<li>' + i + '</li>';
-			});
-			this._resultTarget.innerHTML = html;
-		},
-		addChar: function(ch, obj)
-		{
-			if(this.pinyin.length == 0) // 长度为1，显示输入法
-			{
-				this.show(obj);
-			}
-			this.pinyin += ch;
-			this.refresh();
-		},
-		delChar: function()
-		{
-			if(this.pinyin.length <= 1)
-			{
-				this.hide();
-				return;
-			}
-			this.pinyin = this.pinyin.substr(0, this.pinyin.length-1);
-			this.refresh();
-		},
-		show: function(obj)
-		{
-			var pos = obj.getBoundingClientRect();
-			this._target.style.left = pos.left + 'px';
-			this._target.style.top = pos.top + pos.height + 'px';
-			this._input = obj;
-			this._target.style.display = 'block';
-		},
-		hide: function()
-		{
-			this.reset();
-			this._target.style.display = 'none';
-		},
-		reset: function()
-		{
-			this.hanzi = '';
-			this.pinyin = '';
-			this.pageCurrent = 1;
-			this.pageCount = 0;
-			this._pinyinTarget.innerHTML = '';
-		}
-	};
+	// 初始化简单的拼音输入法
 	SimpleInputMethod.init('.test-input-method');
-
 	</script>
 
 </body>
