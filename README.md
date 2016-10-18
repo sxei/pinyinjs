@@ -1,5 +1,6 @@
+# 一个实现汉字与拼音互转的小巧web工具库
 
-一个实现汉字与拼音互转的小巧web工具库，包含一个非常非常简单的JS版拼音输入法。
+一个实现汉字与拼音互转的小巧web工具库，另外还包含一个非常非常简单的JS版拼音输入法。
 
 演示地址：http://demo.liuxianan.com/pinyinjs
 详细介绍：http://blog.liuxianan.com/pinyinjs.html
