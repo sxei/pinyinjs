@@ -127,7 +127,8 @@ var SimpleInputMethod =
 			});
 			obj[i].addEventListener('focus', function()
 			{
-				//that.hide();
+				// 如果选中的不是当前文本框，隐藏输入法
+				if(that._input !== this) that.hide();
 			});
 		}
 	},

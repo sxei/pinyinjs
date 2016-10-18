@@ -63,15 +63,15 @@
 			}
 		},
 		/**
-		 * 根据汉字获取拼音，不支持多音字处理，如果不是汉字直接返回原字符
-		 * @param str 要处理的汉字
-		 * @param splitter 分割字符，默认空格
-		 * @param withtone 是否包含声调，默认是
+		 * 根据汉字获取拼音，如果不是汉字直接返回原字符
+		 * @param str 要转换的汉字
+		 * @param splitter 分隔字符，默认用空格分隔
+		 * @param withtone 返回结果是否包含声调，默认是
 		 * @param polyphone 是否支持多音字，默认否
 		 */
 		getPinyin: function(str, splitter, withtone, polyphone)
 		{
-			if(!str || /^ +$/g.test(str)) return;
+			if(!str || /^ +$/g.test(str)) return '';
 			splitter = splitter == undefined ? ' ' : splitter;
 			withtone = withtone == undefined ? true : withtone;
 			polyphone = polyphone == undefined ? false : polyphone;
@@ -109,13 +109,13 @@
 		},
 		/**
 		 * 获取汉字的拼音首字母
-		 * str 汉字字符串，如果遇到非汉字则原样返回
+		 * @param str 汉字字符串，如果遇到非汉字则原样返回
 		 * @param polyphone 是否支持多音字，默认false，如果为true，会返回所有可能的组合数组
 		 */
 		getFirstLetter: function(str, polyphone)
 		{
 			polyphone = polyphone == undefined ? false : polyphone;
-			if(!str || /^ +$/g.test(str)) return;
+			if(!str || /^ +$/g.test(str)) return '';
 			if(dict.firstletter) // 使用首字母字典文件
 			{
 				var result = [];
@@ -145,6 +145,18 @@
 				if(!polyphone) return result[0];
 				else return simpleUnique(result);
 			}
+		},
+		/**
+		 * 拼音转汉字，只支持单个汉字，返回所有匹配的汉字组合
+		 * @param pinyin 单个汉字的拼音，不能包含声调
+		 */
+		getHanzi: function(pinyin)
+		{
+			if(!dict.py2hz)
+			{
+				throw '抱歉，未找到合适的拼音字典文件！';
+			}
+			return dict.py2hz[pinyin] || '';
 		},
 		/**
 		 * 去除拼音中的声调，比如将 xiǎo míng tóng xué 转换成 xiao ming tong xue
@@ -184,17 +196,6 @@
 				"": "m2"
 			};
 			return pinyin.replace(/[āáǎàōóǒòēéěèīíǐìūúǔùüǖǘǚǜńň]/g, function(m){ return toneMap[m][0]; });
-		},
-		/**
-		 * 拼音转汉字，只支持单个汉字
-		 */
-		getHanzi: function(pinyin)
-		{
-			if(!dict.py2hz)
-			{
-				throw '抱歉，未找到合适的拼音字典文件！';
-			}
-			return dict.py2hz[pinyin] || '';
 		}
 	};
 
