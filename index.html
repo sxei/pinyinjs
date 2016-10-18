@@ -36,6 +36,7 @@
 		font-size: 0.8em;
 	}
 	#test {margin-top: 10px;}
+	.loading-tip{color: #00960A;margin-bottom: 10px;}
 	</style>
 </head>
 
@@ -58,6 +59,7 @@
 	<h3>转换结果：</h3>
 	<div id="result"></div>
 	<h2>JS实现简单的拼音输入法<span>(请将系统输入法设置为英文)：</span></h2>
+	<div class="loading-tip">正在加载JS，请等待加载完毕再尝试。</div>
 	<input type="text" class="test-input-method" placeholder="请在这里打字试试">
 	<input type="text" class="test-input-method" placeholder="请在这里打字试试">
 	<input type="text" class="test-input-method" placeholder="请在这里打字试试">
@@ -112,6 +114,7 @@
 
 	// 初始化简单的拼音输入法
 	SimpleInputMethod.init('.test-input-method');
+	document.querySelector('.loading-tip').innerHTML = 'JS加载完毕，现在你可以开始打字了！';
 	</script>
 
 </body>
