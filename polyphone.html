@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-cn">
 <head>
 	<meta charset="utf-8"/>
-	<title>汉字拼音互转示例</title>
+	<title>带词库识别多音字的汉字转拼音</title>
 	<link rel="stylesheet" type="text/css" href="simple-input-method/simple-input-method.css">
 	<style type="text/css">
 	body{font-family: 'Microsoft Yahei'; font-size: 16px;}
@@ -37,53 +37,44 @@
 	}
 	#test {margin-top: 10px;}
 	.loading-tip{color: #00960A;margin-bottom: 10px;}
+	p {max-width: 500px;background: #EEE;padding: 10px;}
 	</style>
 </head>
 
 <body>
 	<a href="http://blog.liuxianan.com/pinyinjs.html" target="_blank">返回原文</a>
 	<a href="http://github.com/liuxianan/pinyinjs/" target="_blank">github地址</a>
-	<h2>汉字转拼音：</h2>
+	<a href="http://demo.liuxianan.com/pinyinjs/" target="_blank">返回上一页</a>
+	<h2>带词库可以识别多音字的汉字转拼音：</h2>
+	<p>说明：本页面需要加载900多kb的词库文件，所以不太适合web环境，这里仅仅是演示效果而已，并且由于没有使用分词所以效果也不一定非常好。非要识别多音字的话，推荐在服务端完成（借助一些分词工具效果会更好，比如<a href="https://github.com/fxsjy/jieba">jieba</a>），然后做成接口给前端调用。</p>
+	<div class="loading-tip">正在加载词库，文件比较大，请耐心等待加载完毕再尝试。</div>
 	<div>
 		<span>输出类型：</span>
 		<label><input type="radio" name="pinyin_type" value="0" checked/>带声调拼音</label>
 		<label><input type="radio" name="pinyin_type" value="1"/>不带声调拼音</label>
 		<label><input type="radio" name="pinyin_type" value="2"/>拼音首字母</label>
 	</div>
-	<div>
-		<span>多音字：</span>
-		<label><input type="checkbox" name="polyphone"/>简单支持多音字</label>
-		<span style="color: #9E9E9E;">（支持多音字仅仅是将所有可能的组合列举出来，要做到准确识别多音字还需非常完善的词库）</span>
-		<p>带词库的“准确”识别多音字示例请<a href="polyphone.html">单独点击这里查看</a></p>
-	</div>
-	<input type="text" id="test" value="大中国" placeholder="请随便输入一些中文"/>
+	<input type="text" id="test" value="小明说长大后要去看长城！" placeholder="请随便输入一些中文"/>
 	<h3>转换结果：</h3>
 	<div id="result"></div>
-	<h2>JS实现简单的拼音输入法<span>(请将系统输入法设置为英文)：</span></h2>
-	<div class="loading-tip">正在加载JS，请等待加载完毕再尝试。</div>
-	<input type="text" class="test-input-method" placeholder="请在这里打字试试">
-	<input type="text" class="test-input-method" placeholder="请在这里打字试试">
-	<input type="text" class="test-input-method" placeholder="请在这里打字试试">
 
-	<script type="text/javascript" src="dict/pinyin_dict_notone.js"></script>
 	<script type="text/javascript" src="dict/pinyin_dict_withtone.js"></script>
+	<script type="text/javascript" src="dict/pinyin_dict_polyphone.js"></script>
 	<script type="text/javascript" src="pinyinUtil.js"></script>
-	<script type="text/javascript" src="simple-input-method/simple-input-method.js"></script>
-
+	
 	<script type="text/javascript">
 	function getPinyin()
 	{
 		var value = document.getElementById('test').value;
 		var type = document.querySelector('[name="pinyin_type"]:checked').value;
-		var polyphone = document.querySelector('[name="polyphone"]').checked;
 		var result = '';
 		if(value)
 		{
 			switch(type)
 			{
-				case '0': result = pinyinUtil.getPinyin(value, ' ', true, polyphone); break;
-				case '1': result = pinyinUtil.getPinyin(value, ' ', false, polyphone); break;
-				case '2': result = pinyinUtil.getFirstLetter(value, polyphone); break;
+				case '0': result = pinyinUtil.getPinyin(value, ' ', true, true); break;
+				case '1': result = pinyinUtil.getPinyin(value, ' ', false, true); break;
+				case '2': result = pinyinUtil.getFirstLetter(value, true); break;
 				default: break;
 			}
 		}
@@ -100,10 +91,6 @@
 		document.getElementById('result').innerHTML = html;
 	}
 	document.getElementById('test').addEventListener('input', getPinyin);
-	document.getElementsByName('polyphone')[0].addEventListener('change', function(e)
-	{
-		getPinyin();
-	});
 	document.addEventListener('change', function(e)
 	{
 		if(e.target.name === 'pinyin_type')
@@ -112,9 +99,6 @@
 		}
 	});
 	getPinyin();
-
-	// 初始化简单的拼音输入法
-	SimpleInputMethod.init('.test-input-method');
 	document.querySelector('.loading-tip').innerHTML = 'JS加载完毕，现在你可以开始打字了！';
 	</script>
 
