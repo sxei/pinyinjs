@@ -215,7 +215,6 @@ var pinyin_dict_withtone = "yi1,ding1 zheng1,kao3,qi1,shang4 shang3,xia4,none0,w
 var pinyin_dict_withtone = "yī,dīng zhēng,kǎo qiǎo yú,qī,shàng,xià,hǎn,wàn mò,zhàng,sān,shàng shǎng,xià,qí jī...";
 ```
 
-
 # 如何使用
 
 我将这几种字典文件放在一起并简单封装了一下解析方法，使用中可以根据实际需要引入不同字典文件。
@@ -263,7 +262,7 @@ pinyinUtil.getFirstLetter('大中国', true); // 输出 ['DZG', 'TZG']
 ## 如果拼音不需要声调
 
 ```javascript
-<script type="text/javascript" src="pinyin_dict_noletter.js"></script>
+<script type="text/javascript" src="pinyin_dict_notone.js"></script>
 <script type="text/javascript" src="pinyinUtil.js"></script>
 
 <script type="text/javascript">
@@ -275,12 +274,28 @@ pinyinUtil.getHanzi('ming'); // 输出 '明名命鸣铭冥茗溟酩瞑螟暝'
 ## 如果需要声调或者需要处理生僻字
 
 ```javascript
-<script type="text/javascript" src="pinyin_dict_withletter.js"></script>
+<script type="text/javascript" src="pinyin_dict_withtone.js"></script>
 <script type="text/javascript" src="pinyinUtil.js"></script>
 
 <script type="text/javascript">
 pinyinUtil.getPinyin('小茗同学'); // 输出 'xiǎo míng tóng xué'
 pinyinUtil.getPinyin('小茗同学', '-', true, true); // 输出 ['xiǎo-míng-tóng-xué', 'xiǎo-míng-tòng-xué']
+</script>
+```
+
+## 如果需要精准识别多音字
+
+由于词典文件较大，本示例不推荐在web环境下使用：
+
+```javascript
+<script type="text/javascript" src="dict/pinyin_dict_withtone.js"></script>
+<script type="text/javascript" src="dict/pinyin_dict_polyphone.js"></script>
+<script type="text/javascript" src="pinyinUtil.js"></script>
+
+<script type="text/javascript">
+pinyinUtil.getPinyin('长城和长大', ' ', true, true)； // 输出：cháng chéng hé zhǎng dà
+pinyinUtil.getPinyin('喝水和喝彩', ' ', true, true)； // 输出：hē shuǐ hé hè cǎi
+pinyinUtil.getPinyin('伟大的大夫', ' ', true, true)； // 输出：wěi dà de dài fū
 </script>
 ```
 
