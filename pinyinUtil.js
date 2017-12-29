@@ -87,6 +87,7 @@
 			var result = [];
 			if(dict.withtone) // 优先使用带声调的字典文件
 			{
+				var noChinese = '';
 				for (var i=0, len = chinese.length; i < len; i++)
 				{
 					var pinyin = dict.withtone[chinese[i]];
@@ -94,18 +95,50 @@
 					{
 						if(!polyphone) pinyin = pinyin.replace(/ .*$/g, ''); // 如果不需要多音字
 						if(!withtone) pinyin = this.removeTone(pinyin); // 如果不需要声调
+						//空格，把noChinese作为一个词插入
+						noChinese && ( result.push( noChinese), noChinese = '' );
+						result.push( pinyin ); 
 					}
-					result.push(pinyin || chinese[i]); 
+					else if ( !chinese[i] || /^ +$/g.test(chinese[i]) ){
+						//空格，把noChinese作为一个词插入
+						noChinese && ( result.push( noChinese), noChinese = '' );
+					}
+					else{
+						noChinese += chinese[i];
+					}
+				}
+				if ( noChinese ){
+					result.push( noChinese);
+					noChinese = '';
 				}
 			}
 			else if(dict.notone) // 使用没有声调的字典文件
 			{
 				if(withtone) console.warn('pinyin_dict_notone 字典文件不支持声调！');
 				if(polyphone) console.warn('pinyin_dict_notone 字典文件不支持多音字！');
+				var noChinese = '';
 				for (var i=0, len = chinese.length; i < len; i++)
 				{
-					var temp = chinese.charAt(i);
-					result.push(dict.notone[temp] || temp); 
+					var temp = chinese.charAt(i),
+						pinyin = dict.notone[temp];
+					if ( pinyin ){ //插入拼音
+						//空格，把noChinese作为一个词插入
+						noChinese && ( result.push( noChinese), noChinese = '' );
+						result.push( pinyin );
+					}
+					else if ( !temp || /^ +$/g.test(temp) ){
+						//空格，插入之前的非中文字符
+						noChinese && ( result.push( noChinese), noChinese = '' );
+					}
+					else {
+						//非空格，关联到noChinese中
+						noChinese += temp;
+					}
+				}
+
+				if ( noChinese ){
+					result.push( noChinese );
+					noChinese = '';
 				}
 			}
 			else
