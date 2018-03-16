@@ -2,7 +2,7 @@
 
 一个实现汉字与拼音互转的小巧web工具库，另外还包含一个非常非常简单的JS版拼音输入法。
 
-演示地址：http://demo.liuxianan.com/pinyinjs
+演示地址：http://demo.haoji.me/pinyinjs/
 
 详细介绍：http://blog.liuxianan.com/pinyinjs.html
 
@@ -35,7 +35,7 @@
 
 我这个实现非常得简单，效果一般，性能也一般，需要下载将近1M的词库文件，所以不适合web环境，演示地址：
 
-http://demo.liuxianan.com/pinyinjs/polyphone.html
+http://demo.haoji.me/pinyinjs/polyphone.html
 
 # 拼音字典文件
 
@@ -43,7 +43,7 @@ http://demo.liuxianan.com/pinyinjs/polyphone.html
 
 ## 字典一：拼音首字母
 
-该[字典文件](https://github.com/liuxianan/pinyinjs/blob/master/pinyin_dict_firstletter.js)的内容大致如下：
+该[字典文件](https://github.com/sxei/pinyinjs/blob/master/pinyin_dict_firstletter.js)的内容大致如下：
 
 ```javascript
 /**
@@ -87,7 +87,7 @@ var pinyin_dict_notone =
 };
 ```
 
-后来慢慢发现这个字典文件中存在诸多错误，比如把`虐`的拼音写成了`nue`（正确写法应该是nve）,`躺`写成了`thang`，而且不支持多音字，所以后来我根据其它字典文件自己重新生成了一份这样格式的 [字典文件](https://github.com/liuxianan/pinyinjs/blob/master/pinyin_dict_notone.js)：
+后来慢慢发现这个字典文件中存在诸多错误，比如把`虐`的拼音写成了`nue`（正确写法应该是nve）,`躺`写成了`thang`，而且不支持多音字，所以后来我根据其它字典文件自己重新生成了一份这样格式的 [字典文件](https://github.com/sxei/pinyinjs/blob/master/pinyin_dict_notone.js)：
 
 * 共有404种拼音组合
 * 收录了6763个常用汉字
