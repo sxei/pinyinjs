@@ -1,11 +1,19 @@
-﻿/**
+﻿
+/**
  * 汉字与拼音互转工具，根据导入的字典文件的不同支持不同
  * 对于多音字目前只是将所有可能的组合输出，准确识别多音字需要完善的词库，而词库文件往往比字库还要大，所以不太适合web环境。
  * @start 2016-09-26
  * @last 2016-09-29
  */
-;(function()
-{
+;(function(global, factory) {
+	if (typeof module === "object" && typeof module.exports === "object") {
+		module.exports = factory(global);
+	} else {
+		factory(global);
+	}
+})(typeof window !== "undefined" ? window : this, function(window) {
+
+
 	var dict = {}; // 存储所有字典数据
 	var pinyinUtil =
 	{
@@ -160,7 +168,7 @@
 		},
 		/**
 		 * 拼音转汉字，只支持单个汉字，返回所有匹配的汉字组合
-		 * @param pinyin 单个汉字的拼音，不能包含声调
+		 * @param pinyin 单个汉字的拼音，可以包含声调
 		 */
 		getHanzi: function(pinyin)
 		{
@@ -168,7 +176,17 @@
 			{
 				throw '抱歉，未找到合适的拼音字典文件！';
 			}
-			return dict.py2hz[pinyin] || '';
+			return dict.py2hz[this.removeTone(pinyin)] || '';
+		},
+		/**
+		 * 获取某个汉字的同音字，本方法暂时有问题，待完善
+		 * @param hz 单个汉字
+		 * @param sameTone 是否获取同音同声调的汉字，必须传进来的拼音带声调才支持，默认false
+		 */
+		getSameVoiceWord: function(hz, sameTone)
+		{
+			sameTone = sameTone || false
+			return this.getHanzi(this.getPinyin(hz, ' ', false))
 		},
 		/**
 		 * 去除拼音中的声调，比如将 xiǎo míng tóng xué 转换成 xiao ming tong xue
@@ -304,4 +322,5 @@
 	pinyinUtil.parseDict();
 	pinyinUtil.dict = dict;
 	window.pinyinUtil = pinyinUtil;
-})();
+
+});
