@@ -1,0 +1,25 @@
+{
+  "name": "ipinyinjs",
+  "version": "1.0.0",
+  "description": "一个实现汉字与拼音互转的小巧web工具库",
+  "main": "pinyinUtil.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sxei/pinyinjs.git"
+  },
+  "keywords": [
+    "pinyinjs",
+    "pinyin",
+    "拼音",
+    "js"
+  ],
+  "author": "sxei",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sxei/pinyinjs/issues"
+  },
+  "homepage": "https://github.com/sxei/pinyinjs#readme"
+}
