@@ -3,7 +3,6 @@
 <head>
 	<meta charset="utf-8"/>
 	<title>汉字拼音互转示例</title>
-	<link rel="stylesheet" type="text/css" href="simple-input-method/simple-input-method.css">
 	<style type="text/css">
 	body{font-family: 'Microsoft Yahei'; font-size: 16px;}
 	* {
@@ -31,44 +30,60 @@
 		-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
 		box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
 	}
+	#test {width: 300px;}
+	h2 {
+		background-color: #3199E4;
+		color: white;
+		padding: 2px 8px;
+		border-radius: 5px;
+		font-size: 30px;
+		line-height: 1.5;
+		text-shadow: 1px 1px 1px black;
+		width: 800px;
+	}
 	h2 > span {
 		color: #B10000;
 		font-size: 0.8em;
 	}
 	#test {margin-top: 10px;}
 	.loading-tip{color: #00960A;margin-bottom: 10px;}
+	.container {
+		width: 1024px;
+		margin: 20px auto;
+	}
 	</style>
 </head>
 
 <body>
-	<a href="http://blog.haoji.me/pinyinjs.html" target="_blank">返回原文</a>
-	<a href="http://github.com/sxei/pinyinjs/" target="_blank">github地址</a>
-	<h2>汉字转拼音：</h2>
-	<div>
-		<span>输出类型：</span>
-		<label><input type="radio" name="pinyin_type" value="0" checked/>带声调拼音</label>
-		<label><input type="radio" name="pinyin_type" value="1"/>不带声调拼音</label>
-		<label><input type="radio" name="pinyin_type" value="2"/>拼音首字母</label>
-	</div>
-	<div>
-		<span>多音字：</span>
-		<label><input type="checkbox" name="polyphone"/>简单支持多音字</label>
-		<span style="color: #9E9E9E;">（支持多音字仅仅是将所有可能的组合列举出来，要做到准确识别多音字还需非常完善的词库）</span>
-		<p>带词库的“准确”识别多音字示例请<a href="polyphone.html">单独点击这里查看</a></p>
-	</div>
-	<input type="text" id="test" value="大中国" placeholder="请随便输入一些中文"/>
-	<h3>转换结果：</h3>
-	<div id="result"></div>
-	<h2>JS实现简单的拼音输入法<span>(请将系统输入法设置为英文)：</span></h2>
-	<div class="loading-tip">正在加载JS，请等待加载完毕再尝试。</div>
-	<input type="text" class="test-input-method" placeholder="请在这里打字试试">
-	<input type="text" class="test-input-method" placeholder="请在这里打字试试">
-	<input type="text" class="test-input-method" placeholder="请在这里打字试试">
+	<div class="container">
+		<a href="http://blog.haoji.me/pinyinjs.html" target="_blank">返回原文</a>
+		<a href="http://github.com/sxei/pinyinjs/" target="_blank">github地址</a>
+		<h2>汉字转拼音</h2>
+		<div>
+			<span>输出类型：</span>
+			<label><input type="radio" name="pinyin_type" value="0" checked/>带声调拼音</label>
+			<label><input type="radio" name="pinyin_type" value="1"/>不带声调拼音</label>
+			<label><input type="radio" name="pinyin_type" value="2"/>拼音首字母</label>
+		</div>
+		<div>
+			<span>多音字：</span>
+			<label><input type="checkbox" name="polyphone"/>简单支持多音字</label>
+			<span style="color: #9E9E9E;">（支持多音字仅仅是将所有可能的组合列举出来，要做到准确识别多音字还需非常完善的词库）</span>
+		</div>
+		<input type="text" id="test" value="大中国" placeholder="请随便输入一些中文"/>
+		<h3>转换结果：</h3>
+		<div id="result"></div>
 
-	<script type="text/javascript" src="dict/pinyin_dict_notone.js"></script>
+		<h2>带词库、“准确”识别多音字示例</span></h2>
+		<p>由于词库文件较大，请单独<a href="polyphone.html" target="_blank">移步至这里查看支持多音字示例</a>。</p>
+
+		<h2>JS实现简单的拼音输入法</h2>
+		<p>JS实现的输入法请单独移步至<a href="simple-input-method.html" target="_blank">JS实现简单的拼音输入法</a>。</p>
+		
+	</div>
+
 	<script type="text/javascript" src="dict/pinyin_dict_withtone.js"></script>
 	<script type="text/javascript" src="pinyinUtil.js"></script>
-	<script type="text/javascript" src="simple-input-method/simple-input-method.js"></script>
 
 	<script type="text/javascript">
 	function getPinyin()
@@ -112,10 +127,6 @@
 		}
 	});
 	getPinyin();
-
-	// 初始化简单的拼音输入法
-	SimpleInputMethod.init('.test-input-method');
-	document.querySelector('.loading-tip').innerHTML = 'JS加载完毕，现在你可以开始打字了！';
 	</script>
 
 </body>

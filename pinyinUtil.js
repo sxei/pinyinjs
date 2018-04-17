@@ -13,7 +13,7 @@
 	}
 })(typeof window !== "undefined" ? window : this, function(window) {
 
-
+	
 	var dict = {}; // 存储所有字典数据
 	var pinyinUtil =
 	{
@@ -37,14 +37,14 @@
 					var temp = pinyin_dict_notone[i];
 					for(var j=0, len=temp.length; j<len; j++)
 					{
-						dict.notone[temp[j]] = i; // 不考虑多音字
+						if(!dict.notone[temp[j]]) dict.notone[temp[j]] = i; // 不考虑多音字
 					}
 				}
 			}
 			// 如果导入了 pinyin_dict_withtone.js
 			if(window.pinyin_dict_withtone)
 			{
-				dict.withtone = {};
+				dict.withtone = {}; // 汉字与拼音映射，多音字用空格分开，类似这种结构：{'大': 'da tai'}
 				var temp = pinyin_dict_withtone.split(',');
 				for(var i=0, len = temp.length; i<len; i++)
 				{
@@ -68,7 +68,6 @@
 					for(var i=0, len = notone.length; i<len; i++)
 					{
 						hz = String.fromCharCode(i + 19968); // 汉字
-						// = aaa[i];
 						py = notone[i].split(' '); // 去掉了声调的拼音数组
 						for(var j=0; j<py.length; j++)
 						{
@@ -101,7 +100,9 @@
 					var pinyin = dict.withtone[chinese[i]];
 					if(pinyin)
 					{
-						if(!polyphone) pinyin = pinyin.replace(/ .*$/g, ''); // 如果不需要多音字
+						// 如果不需要多音字，默认返回第一个拼音，后面的直接忽略
+						// 所以这对数据字典有一定要求，常见字的拼音必须放在最前面
+						if(!polyphone) pinyin = pinyin.replace(/ .*$/g, '');
 						if(!withtone) pinyin = this.removeTone(pinyin); // 如果不需要声调
 						//空格，把noChinese作为一个词插入
 						noChinese && ( result.push( noChinese), noChinese = '' );

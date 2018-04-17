@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="utf-8"/>
+	<title>汉字拼音互转示例</title>
+	<link rel="stylesheet" type="text/css" href="simple-input-method/simple-input-method.css">
+	<style type="text/css">
+	body{font-family: 'Microsoft Yahei'; font-size: 16px;}
+	* {
+		-webkit-box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		box-sizing: border-box;
+	}
+	input[type="text"] {
+		height: 34px;
+		padding: 6px 12px;
+		font-size: 14px;
+		line-height: 1.42857143;
+		color: #555;
+		background-color: #fff;
+		background-image: none;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+		-webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+		transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+	}
+	input[type="text"]:focus {
+		border-color: #66afe9;
+		outline: 0;
+		-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
+		box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
+	}
+	#test {width: 300px;}
+	h2 {
+		background-color: #3199E4;
+		color: white;
+		padding: 2px 8px;
+		border-radius: 5px;
+		font-size: 30px;
+		line-height: 1.5;
+		text-shadow: 1px 1px 1px black;
+		width: 800px;
+	}
+	h2 > span {
+		color: #ff0d0d;
+		font-size: 0.8em;
+		text-shadow: 1px 1px 0px white;
+		margin-left: 10px;
+	}
+	#test {margin-top: 10px;}
+	.loading-tip{color: #00960A;margin-bottom: 10px;}
+	.container {
+		width: 1024px;
+		margin: 20px auto;
+	}
+	</style>
+</head>
+
+<body>
+	<div class="container">
+		<a href="http://blog.haoji.me/pinyinjs.html" target="_blank">返回原文</a>
+		<a href="http://github.com/sxei/pinyinjs/" target="_blank">github地址</a>
+		<a href="http://demo.haoji.me/pinyinjs/">返回上一页</a>
+
+		<h2>JS实现简单的拼音输入法<span>(请将系统输入法设置为英文)：</span></h2>
+		<div class="loading-tip">正在加载JS，请等待加载完毕再尝试。</div>
+		<input type="text" class="test-input-method" placeholder="请在这里打字试试">
+		<input type="text" class="test-input-method" placeholder="请在这里打字试试">
+		<input type="text" class="test-input-method" placeholder="请在这里打字试试">
+	</div>
+
+	<script type="text/javascript" src="dict/pinyin_dict_notone.js"></script>
+	<script type="text/javascript" src="pinyinUtil.js"></script>
+	<script type="text/javascript" src="simple-input-method/simple-input-method.js"></script>
+
+	<script type="text/javascript">
+	// 初始化简单的拼音输入法
+	SimpleInputMethod.init('.test-input-method');
+	document.querySelector('.loading-tip').innerHTML = 'JS加载完毕，现在你可以开始打字了！';
+	</script>
+
+</body>
+</html>
