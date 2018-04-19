@@ -13,7 +13,7 @@
 	}
 })(typeof window !== "undefined" ? window : this, function(window) {
 
-	
+
 	var dict = {}; // 存储所有字典数据
 	var pinyinUtil =
 	{
@@ -106,7 +106,7 @@
 						if(!withtone) pinyin = this.removeTone(pinyin); // 如果不需要声调
 						//空格，把noChinese作为一个词插入
 						noChinese && ( result.push( noChinese), noChinese = '' );
-						result.push( pinyin ); 
+						result.push( pinyin );
 					}
 					else if ( !chinese[i] || /^ +$/g.test(chinese[i]) ){
 						//空格，把noChinese作为一个词插入
@@ -228,7 +228,7 @@
 		 */
 		removeTone: function(pinyin)
 		{
-			var toneMap = 
+			var toneMap =
 			{
 				"ā": "a1",
 				"á": "a2",
@@ -356,5 +356,7 @@
 	pinyinUtil.parseDict();
 	pinyinUtil.dict = dict;
 	window.pinyinUtil = pinyinUtil;
+
+	return pinyinUtil;
 
 });
