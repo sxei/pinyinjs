@@ -13,7 +13,38 @@
 	}
 })(typeof window !== "undefined" ? window : this, function(window) {
 
-	
+	var toneMap = 
+	{
+		"ā": "a1",
+		"á": "a2",
+		"ǎ": "a3",
+		"à": "a4",
+		"ō": "o1",
+		"ó": "o2",
+		"ǒ": "o3",
+		"ò": "o4",
+		"ē": "e1",
+		"é": "e2",
+		"ě": "e3",
+		"è": "e4",
+		"ī": "i1",
+		"í": "i2",
+		"ǐ": "i3",
+		"ì": "i4",
+		"ū": "u1",
+		"ú": "u2",
+		"ǔ": "u3",
+		"ù": "u4",
+		"ü": "v0",
+		"ǖ": "v1",
+		"ǘ": "v2",
+		"ǚ": "v3",
+		"ǜ": "v4",
+		"ń": "n2",
+		"ň": "n3",
+		"": "m2"
+	};
+
 	var dict = {}; // 存储所有字典数据
 	var pinyinUtil =
 	{
@@ -228,38 +259,19 @@
 		 */
 		removeTone: function(pinyin)
 		{
-			var toneMap = 
-			{
-				"ā": "a1",
-				"á": "a2",
-				"ǎ": "a3",
-				"à": "a4",
-				"ō": "o1",
-				"ó": "o2",
-				"ǒ": "o3",
-				"ò": "o4",
-				"ē": "e1",
-				"é": "e2",
-				"ě": "e3",
-				"è": "e4",
-				"ī": "i1",
-				"í": "i2",
-				"ǐ": "i3",
-				"ì": "i4",
-				"ū": "u1",
-				"ú": "u2",
-				"ǔ": "u3",
-				"ù": "u4",
-				"ü": "v0",
-				"ǖ": "v1",
-				"ǘ": "v2",
-				"ǚ": "v3",
-				"ǜ": "v4",
-				"ń": "n2",
-				"ň": "n3",
-				"": "m2"
-			};
 			return pinyin.replace(/[āáǎàōóǒòēéěèīíǐìūúǔùüǖǘǚǜńň]/g, function(m){ return toneMap[m][0]; });
+		},
+		/**
+		 * 将数组拼音转换成真正的带标点的拼音
+		 * @param pinyinWithoutTone 类似 xu2e这样的带数字的拼音
+		 */
+		getTone: function(pinyinWithoutTone)
+		{
+			var newToneMap = {};
+			for(var i in toneMap) newToneMap[toneMap[i]] = i;
+			return (pinyinWithoutTone || '').replace(/[a-z]\d/g, function(m) {
+				return newToneMap[m] || m;
+			});
 		}
 	};
 
