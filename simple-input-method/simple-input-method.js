@@ -42,11 +42,7 @@ var SimpleInputMethod =
 	 */
 	initDom: function()
 	{
-		var temp = `<div class="pinyin"></div>
-					<div class="result">
-						<ol></ol>
-						<div class="page-up-down"><span class="page-up">▲</span><span class="page-down">▼</span></div>
-					</div>`;
+		var temp = '<div class="pinyin"></div><div class="result"><ol></ol><div class="page-up-down"><span class="page-up">▲</span><span class="page-down">▼</span></div></div>';
 		var dom = document.createElement('div');
 		dom.id = 'simle_input_method';
 		dom.className = 'simple-input-method';
