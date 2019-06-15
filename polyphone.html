@@ -67,8 +67,7 @@
 			<span>输出类型：</span>
 			<label><input type="radio" name="pinyin_type" value="0" checked/>带声调拼音</label>
 			<label><input type="radio" name="pinyin_type" value="1"/>不带声调拼音</label>
-			<label><input type="radio" name="pinyin_type" value="2"/>拼音首字母大写</label>
-			<label><input type="radio" name="pinyin_type" value="3"/>拼音首字母小写</label>
+			<label><input type="radio" name="pinyin_type" value="2"/>拼音首字母</label>
 		</div>
 		<input type="text" id="test" value="小明说长大后要去看长城！" placeholder="请随便输入一些中文"/>
 		<h3>转换结果：</h3>
@@ -92,7 +91,6 @@
 				case '0': result = pinyinUtil.getPinyin(value, ' ', true, true); break;
 				case '1': result = pinyinUtil.getPinyin(value, ' ', false, true); break;
 				case '2': result = pinyinUtil.getFirstLetter(value, true); break;
-				case '3': result = pinyinUtil.getFirstLetter(value, true).toLowerCase(); break;
 				default: break;
 			}
 		}
