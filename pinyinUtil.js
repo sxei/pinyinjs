@@ -222,11 +222,26 @@
 			{
 				var py = this.getPinyin(str, ' ', false, polyphone);
 				py = py instanceof Array ? py : [py];
+
 				var result = [];
 				for(var i=0; i<py.length; i++)
 				{
-					result.push(py[i].replace(/(^| )(\w)\w*/g, function(m,$1,$2){return $2.toUpperCase();}));
+                    // result.push(py[i].replace(/(^| )(\w)\w*/g, function(m,$1,$2){return $2.toUpperCase();}));
+                    var temp = [];
+                    var items = py[i].split(' ');
+                    var reg = /^\w/;
+                    for (var j = 0, len = items.length; j < len; j++) {
+                        var item = items[j];
+                        if (reg.test(item)) {
+                            temp.push(item[0].toUpperCase());
+                        } else {
+                            temp.push(item);
+                        }
+                    }
+
+                    result.push(temp.join(''));
 				}
+
 				if(!polyphone) return result[0];
 				else return simpleUnique(result);
 			}
