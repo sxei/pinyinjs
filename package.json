@@ -21,5 +21,8 @@
   "bugs": {
     "url": "https://github.com/sxei/pinyinjs/issues"
   },
+  "dependencies": {
+    "pinyin-pro": "^3,2,0"
+  },
   "homepage": "https://github.com/sxei/pinyinjs#readme"
 }
