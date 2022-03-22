@@ -7,7 +7,7 @@
 
 支持小写字母，演示地址：
 
-chordmo.github.io/pinyinjs/
+http://chordmo.github.io/pinyinjs/
 
 
 
