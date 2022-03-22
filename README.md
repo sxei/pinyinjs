@@ -2,6 +2,22 @@
 
 一个实现汉字与拼音互转的小巧web工具库，另外还包含一个非常非常简单的JS版拼音输入法。
 
+
+
+
+支持小写字母，演示地址：
+
+chordmo.github.io/pinyinjs/
+
+
+
+
+
+
+
+
+原演示地址：
+
 演示地址：http://demo.haoji.me/pinyinjs/
 
 支持多音字演示：http://demo.haoji.me/pinyinjs/polyphone.html
